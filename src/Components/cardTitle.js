@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
-import { Link } from "react-router-dom";
 import React from "react";
+import { Link } from "react-router-dom";
 const Offer = ({ offer }) => {
   localStorage.setItem("offer", JSON.stringify(offer));
   return (

@@ -4,7 +4,9 @@ import Offerings from "../Components/offeringsComponent";
 import { Card, CardHeader } from "react-bootstrap";
 import CarouselHeader from "../Components/carouselComponent";
 import React from "react";
-function HomePage() {
+import SidebarMenu from "../Components/sidebar.menu";
+import DashboardPage from "./dashboard.page";
+const HomePage = () => {
   return (
     <div id="root">
       <NavBarComponent></NavBarComponent>
@@ -19,5 +21,5 @@ function HomePage() {
       </Card>
     </div>
   );
-}
+};
 export default HomePage;

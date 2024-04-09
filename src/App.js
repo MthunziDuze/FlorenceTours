@@ -2,54 +2,51 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js//bootstrap";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import BuyPage from "./pages/buyComponent";
-import HomePage from "./pages/homePage";
-import LoginPage from "./pages/loginPage";
-import CheckOutPage from "./pages/checkOutPage";
-
-// function login() {
-//   console.log("Hello you looking for me?");
-//   return(window.location.href= "/buy")
-
-// }
-
-// const ButtonsDetails = [
-//   {
-//     text:"Dashboard",
-//     color:"btn btn-link px-3 me-2"
-//   },
-//   {
-//   text:"Login",
-//   onClickFunc:login,
-//   color:"btn btn-link px-3 me-2"
-// },
-// {
-//   text:"Sign up for free",
-//   color:"btn btn-primary me-3"
-// }
-// ];
-
-// const InputDetails =[
-//   {
-//     Label:"Email Address",
-//     type :"text"
-//   },
-//   {
-//     Label:"Password",
-//     type :"password"
-
-//   }
-// ]
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
+import AuthRoutes from "./routes/AuthRoutes";
+import UnAuthRoutes from "./routes/UnAuthRoutes";
+import DashboardPage from "./pages/dashboard.page";
+import AuthGuard from "./guards/AuthGuards";
+import ActivityPage from "./pages/activity.page";
+import LocationPage from "./pages/locationPage";
+import CheckOutPage from "./pages/checkOutPage";
+import VacationPage from "./pages/vacationPage";
+import OfferPage from "./pages/offer.page";
+import UserDashboardPage from "./pages/user.dashboard.page";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="buy" element={<BuyPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="checkout" element={<CheckOutPage />} />
+        {UnAuthRoutes}
+        <Route path="/" element={<DashboardPage />}>
+          <Route
+            key={"userdashboad"}
+            path="/dashboard/userdash"
+            element={<AuthGuard component={<UserDashboardPage />} />}
+          />
+          <Route
+            key={"offer"}
+            path="/dashboard/offer"
+            element={<AuthGuard component={<OfferPage />} />}
+          />
+          <Route
+            key={"vacation"}
+            path="/dashboard/vacation"
+            element={<AuthGuard component={<VacationPage />} />}
+          />
+          <Route
+            key={"activity"}
+            path="/dashboard/activity"
+            element={<AuthGuard component={<ActivityPage />} />}
+          />
+          <Route
+            key={"location"}
+            path="/dashboard/location"
+            element={<AuthGuard component={<LocationPage />} />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

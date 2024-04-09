@@ -2,7 +2,7 @@ import http from "../http-common";
 
 class CustomerService {
   create(data) {
-    return http.post("/customer", data);
+    return http.post("/user", data);
   }
 
   getAll() {
@@ -13,10 +13,10 @@ class CustomerService {
     return http.get(`/customer/${id}`);
   }
   update(id, data) {
-    return http.put(`/tutorials/${id}`, data);
+    return http.put(`/customer/${id}`, data);
   }
   findByTitle(username) {
-    return http.get(`/tutorials?username=${username}`);
+    return http.get(`/customer?username=${username}`);
   }
 }
 export default new CustomerService();

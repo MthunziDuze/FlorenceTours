@@ -5,7 +5,8 @@ import React, { createContext } from "react";
 import PayFast from "./payFast";
 
 const OfferContext = createContext({});
-function CheckOutPage(props) {
+
+const CheckOutPage = (props) => {
   const { state } = useLocation();
   console.log(state);
   const offer = localStorage.getItem("offer");
@@ -17,5 +18,5 @@ function CheckOutPage(props) {
       </OfferContext.Provider>
     </div>
   );
-}
+};
 export default CheckOutPage;

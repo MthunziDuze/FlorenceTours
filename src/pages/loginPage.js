@@ -1,5 +1,5 @@
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
-import { useLocation, useNavigate } from "react-router-dom";
+//import { useGoogleLogin } from "@react-oauth/google";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 import {
@@ -15,20 +15,14 @@ import {
 import CarouselImage from "../Components/imageComponent";
 
 const MyContext = React.createContext();
-function LoginPage() {
+const LoginPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  console.log(state);
   const offer = state;
-  console.log("offer :", offer);
   const [user, setUser] = useState([]);
   const [profile, setProfile] = useState([]);
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-  };
 
-  const login = useGoogleLogin({
+  const login = (useGoogleLogin) => ({
     onSuccess: (res) => {
       setUser(res);
     },
@@ -47,7 +41,7 @@ function LoginPage() {
             profile.push(res_JSON);
             console.log("complete profile with offer: ", profile);
 
-            return navigate("/checkout", { state: profile });
+            return navigate("/dashboard/userdash", { state: profile });
           });
         })
         .catch((err) => {
@@ -134,6 +128,11 @@ function LoginPage() {
                       Remember me
                     </label>
                   </div>
+                  <div className="mb-3">
+                    <Button as={Link} to={"/signup"} state={offer}>
+                      Login to check out
+                    </Button>
+                  </div>
                 </Form>
               </CardBody>
             </div>
@@ -142,5 +141,5 @@ function LoginPage() {
       </Row>
     </MyContext.Provider>
   );
-}
+};
 export default LoginPage;

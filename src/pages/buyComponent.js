@@ -19,7 +19,7 @@ import MyLogo from "../images/mylogo.jpg";
 import TitleContainer from "../Components/containerComponent";
 
 var totalPrice;
-function BuyPage(props) {
+const BuyPage = (props) => {
   const { state } = useLocation();
   const offer = state;
   const [text, setText] = useState(offer.price);
@@ -126,7 +126,7 @@ function BuyPage(props) {
                   </div>
                   <div id="total">Total: R{text}</div>
                 </CardText>
-                <Button as={Link} to={"/login"} state={offer}>
+                <Button as={Link} to={"/dashboard/userdash"} state={offer}>
                   Login to check out
                 </Button>
               </CardBody>
@@ -141,5 +141,5 @@ function BuyPage(props) {
     totalPrice = offer.price * p;
     return totalPrice;
   }
-}
+};
 export default BuyPage;
