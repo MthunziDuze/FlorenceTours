@@ -1,5 +1,4 @@
-import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import {
   Card,
@@ -12,7 +11,6 @@ import {
   Dropdown,
 } from "react-bootstrap";
 
-import CarouselImage from "../Components/imageComponent";
 import vacationService from "../services/vacation.service";
 import locationService from "../services/location.service";
 
@@ -27,18 +25,6 @@ const VacationPage = () => {
     toDate: Date,
     locationId: 0,
   });
-
-  const updatePrice = (newPrice) => {
-    setVacation((previosState) => {
-      return { ...previosState, price: newPrice };
-    });
-  };
-
-  const updateDescription = (newDescription) => {
-    setVacation((previosState) => {
-      return { ...previosState, description: newDescription };
-    });
-  };
 
   const updatefromDate = (fromDate) => {
     setVacation((previosState) => {
@@ -64,7 +50,7 @@ const VacationPage = () => {
   function handleSelectChange(evt) {
     updateLocation(evt);
     data.forEach((da) => {
-      if (da.id == evt) {
+      if (da.id === evt) {
         setText(da.placename);
       }
     });
@@ -82,9 +68,9 @@ const VacationPage = () => {
     console.log(e.target.id);
     const id = e.target.id;
     const value = e.target.value;
-    if (id == "fromDate") {
+    if (id === "fromDate") {
       updatefromDate(value);
-    } else if (id == "toDate") {
+    } else if (id === "toDate") {
       updatetoDate(value);
     }
   }
@@ -117,7 +103,54 @@ const VacationPage = () => {
         <Col style={{ width: "50%" }}>
           <br></br>
           <Card className="card" style={{ padding: "18px 16px" }}>
-            <CarouselImage></CarouselImage>
+            <div className="list-group">
+              <label className="list-group-item d-flex gap-2">
+                <input
+                  class="form-check-input flex-shrink-0"
+                  type="radio"
+                  name="listGroupRadios"
+                  id="listGroupRadios1"
+                  value={""}
+                  checked
+                />
+                <span>
+                  First radio
+                  <small className="d-block text-body-secondary">
+                    With support text underneath to add more detail
+                  </small>
+                </span>
+              </label>
+              <label className="list-group-item d-flex gap-2">
+                <input
+                  className="form-check-input flex-shrink-0"
+                  type="radio"
+                  name="listGroupRadios"
+                  id="listGroupRadios2"
+                  value={""}
+                />
+                <span>
+                  Second radio
+                  <small className="d-block text-body-secondary">
+                    Some other text goes here
+                  </small>
+                </span>
+              </label>
+              <label className="list-group-item d-flex gap-2">
+                <input
+                  className="form-check-input flex-shrink-0"
+                  type="radio"
+                  name="listGroupRadios"
+                  id="listGroupRadios3"
+                  value={""}
+                />
+                <span>
+                  Third radio
+                  <small className="d-block text-body-secondary">
+                    And we end with another snippet of text
+                  </small>
+                </span>
+              </label>
+            </div>
             <CardTitle></CardTitle>
           </Card>
         </Col>

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 import {
@@ -13,12 +13,10 @@ import {
 
 import CarouselImage from "../Components/imageComponent";
 import offerService from "../services/offer.service";
-import vacationService from "../services/vacation.service";
 const MyContext = React.createContext();
 
 const OfferPage = () => {
   const navigate = useNavigate();
-  const { state } = useLocation();
 
   const [offers, setOffers] = useState([]);
 
@@ -193,7 +191,7 @@ const OfferPage = () => {
                       onChange={handleChangeSelect}
                     >
                       {offers.map((offer) => {
-                        //<option value={offer.key}>{offer.value}</option>;
+                        return <option value={offer.key}>{offer.value}</option>;
                       })}
                     </select>
                   </div>

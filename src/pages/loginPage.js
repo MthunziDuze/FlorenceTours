@@ -1,4 +1,4 @@
-//import { useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -11,15 +11,17 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
-
 import CarouselImage from "../Components/imageComponent";
+import userService from "../services/user.service";
+import { jwtDecode } from "jwt-decode";
 
 const MyContext = React.createContext();
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const offer = state;
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
   const [profile, setProfile] = useState([]);
 
   const login = (useGoogleLogin) => ({
@@ -48,7 +50,32 @@ const LoginPage = () => {
           console.log("err geting user info", err);
         });
     }
-  }, [user]);
+  }, [user, profile, navigate, offer]);
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(user);
+    userService
+      .login(user)
+      .then((res) => {
+        console.log(res.data);
+        const logintoken = res.data.access_token;
+        const user = jwtDecode(logintoken);
+        localStorage.setItem("access_token", logintoken);
+        if (user.userType === "ADMIN") {
+          return navigate("/dashboard/userdash");
+        } else if (user.userType === "USER" && offer !== null) {
+          return navigate("/checkout", { state: offer });
+        }
+        return navigate("/");
+      })
+      .catch((err) => {
+        console.log("err saving customer info", err);
+      });
+  };
 
   return (
     <MyContext.Provider value={offer}>
@@ -67,42 +94,22 @@ const LoginPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <div className="container">
-              {profile.length > 0 ? (
-                profile.map((user) => {
-                  return (
-                    <div>
-                      <h1>Welcome {user.name}</h1>
-                      <div class="card" style={{ width: "18rem" }}>
-                        <img
-                          class="card-img-top"
-                          src={user.picture}
-                          alt="Card cap"
-                        />
-                        <div class="card-body">
-                          <p class="card-text">{user.email}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <Button onClick={login}>Sign in with google</Button>
-              )}
               <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
                 Florence Tours
               </CardTitle>
               <CardBody>
                 <p className="title">Travel and Touring</p>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="username" className="form-label">
-                      Email address
+                      Username
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       className="form-control"
                       id="username"
-                      area-describedby="emialHelp"
+                      value={user.username || ""}
+                      onChange={handleChange}
                     />
                     <div id="emailHelp" className="form-text">
                       We'll never share your Email with anyone else.
@@ -116,6 +123,8 @@ const LoginPage = () => {
                       type="password"
                       className="form-control"
                       id="password"
+                      value={user.password || ""}
+                      onChange={handleChange}
                     />
                   </div>
                   <div className="mb-3">
@@ -128,10 +137,47 @@ const LoginPage = () => {
                       Remember me
                     </label>
                   </div>
-                  <div className="mb-3">
-                    <Button as={Link} to={"/signup"} state={offer}>
-                      Login to check out
-                    </Button>
+                  <div style={{ align: "center" }}>
+                    <div className="mb-3">
+                      <Button type="submit" className="btn-secondary">
+                        Login
+                      </Button>
+                    </div>
+                    <div className="mb-3">
+                      {profile.length > 0 ? (
+                        profile.map((user) => {
+                          return (
+                            <div>
+                              <h1>Welcome {user.name}</h1>
+                              <div class="card" style={{ width: "18rem" }}>
+                                <img
+                                  class="card-img-top"
+                                  src={user.picture}
+                                  alt="Card cap"
+                                />
+                                <div class="card-body">
+                                  <p class="card-text">{user.email}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <Button className="btn-secondary" onClick={login}>
+                          Sign in with google
+                        </Button>
+                      )}
+                    </div>
+                    <div className="mb-3">
+                      <Button
+                        className="btn-secondary"
+                        as={Link}
+                        to={"/signup"}
+                        state={offer}
+                      >
+                        No Account? Signup
+                      </Button>
+                    </div>
                   </div>
                 </Form>
               </CardBody>

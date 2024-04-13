@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import React from "react";
 import MD5 from "crypto-js/md5";
@@ -9,7 +8,6 @@ function PayFast() {
   console.log("State: ", state);
   const myOffer = state[0];
   const loggedin_user = state[1];
-  const [offer, setMyOffer] = useState(myOffer);
   console.log("Offer: ", myOffer);
 
   const paymentId = "123456755434";
@@ -19,23 +17,21 @@ function PayFast() {
   dataK["return_url"] = "https://192.168.180.77:3000/login";
   dataK["cancel_url"] = "https://192.168.180.77:3000/login";
   dataK["notify_url"] = "https://192.168.180.77:3000/login";
-  dataK["name_first"] = loggedin_user.given_name;
-  dataK["name_last"] = loggedin_user.family_name;
-  dataK["email_address"] = loggedin_user.email;
+  dataK["name_first"] = "hello";
+  dataK["name_last"] = "hello";
+  dataK["email_address"] = "hello";
   dataK["m_payment_id"] = paymentId;
-  dataK["amount"] = myOffer.price.toString();
-  dataK["item_name"] = myOffer.name;
+  dataK["amount"] = "1233";
+  dataK["item_name"] = "234";
   const myData = {
     given_name: loggedin_user.given_name,
     family_name: loggedin_user.family_name,
     email: loggedin_user.email,
-    amount: myOffer.price,
-    item_name: myOffer.name,
+    amount: 123,
+    item_name: "myOffer.name",
   };
 
   const myPassPhrase = "mth957PAYFAST";
-
-  const [formData, setFormData] = useState(myData);
 
   console.log("Signature", dataK);
   const generateSignature = (data, passPhrase = null) => {

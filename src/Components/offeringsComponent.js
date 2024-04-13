@@ -19,7 +19,7 @@ const Offerings = () => {
       <div>
         <div className={style.scrollcontainer} onWheel={handleScroll}>
           {data.map((offer) => (
-            <Offer key={offer.id} offer={offer} style={"width: 100vw"} />
+            <Offer key={offer.id} offer={offer} style={{ width: "100vw" }} />
           ))}
         </div>
       </div>

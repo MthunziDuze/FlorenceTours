@@ -22,7 +22,6 @@ const SignupPage = () => {
   const offer = state;
 
   const [customer, setCustomer] = useState({});
-  const [data, setData] = useState([]);
   const handleChange = (e) => {
     setCustomer({ ...customer, [e.target.id]: e.target.value });
   };
@@ -37,10 +36,9 @@ const SignupPage = () => {
         const myData = [];
         myData.push(offer);
         myData.push(customer);
-        setData(myData);
         console.log(res);
 
-        return navigate("/checkout", { state: myData });
+        return navigate("/login", { state: myData });
       })
       .catch((err) => {
         console.log("err saving customer info", err);

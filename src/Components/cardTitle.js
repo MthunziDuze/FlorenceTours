@@ -12,12 +12,13 @@ const Offer = ({ offer }) => {
           <Card.Title style={{ textAlign: "center" }}>{offer.name}</Card.Title>
           <Card.Text>{offer.description}</Card.Text>
           <Button
+            className="bt-secondarybtn btn-secondary btn btn-primary"
             style={{ display: "block" }}
             as={Link}
             to={"/buy"}
             state={offer}
           >
-            Buy
+            View More Details
           </Button>
         </Card.Body>
       </Card>

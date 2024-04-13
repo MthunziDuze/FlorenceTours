@@ -1,5 +1,3 @@
-import TitleContainer from "../Components/containerComponent";
-import NavBarComponent from "../Components/navBarComponent";
 import { useLocation } from "react-router-dom";
 import React, { createContext } from "react";
 import PayFast from "./payFast";
@@ -14,7 +12,9 @@ const CheckOutPage = (props) => {
   return (
     <div>
       <OfferContext.Provider value={state}>
-        <PayFast></PayFast>
+        {/* <PayFast></PayFast> */}
+        <h1>HI WELCOME TO CHECKOUT</h1>
+        <p>Dont worry Im just a place holder for a BIG coming change..</p>
       </OfferContext.Provider>
     </div>
   );

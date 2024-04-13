@@ -12,7 +12,6 @@ import {
 } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import CarouselImage from "../Components/imageComponent";
-import NavBarComponent from "../Components/navBarComponent";
 import "./buy.css";
 import React from "react";
 import MyLogo from "../images/mylogo.jpg";
@@ -38,7 +37,6 @@ const BuyPage = (props) => {
   };
   return (
     <div className="App">
-      <NavBarComponent></NavBarComponent>
       <TitleContainer></TitleContainer>
       <Row>
         <Col style={{ width: "50%" }}>
@@ -126,7 +124,12 @@ const BuyPage = (props) => {
                   </div>
                   <div id="total">Total: R{text}</div>
                 </CardText>
-                <Button as={Link} to={"/dashboard/userdash"} state={offer}>
+                <Button
+                  as={Link}
+                  to={"/login"}
+                  className="btn btn-secondary btn btn-primary"
+                  state={offer}
+                >
                   Login to check out
                 </Button>
               </CardBody>

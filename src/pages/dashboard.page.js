@@ -1,6 +1,5 @@
 import React from "react";
 import SidebarMenu from "../Components/sidebar.menu";
-import AuthRoutes from "../routes/AuthRoutes";
 import { Route, Routes } from "react-router-dom";
 import VacationPage from "./vacationPage";
 import OfferPage from "./offer.page";
