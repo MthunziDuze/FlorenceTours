@@ -1,30 +1,33 @@
 import { useState } from "react";
 import {
-  Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
-  CardImgOverlay,
   CardText,
   Col,
   Image,
   Row,
 } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
-import CarouselImage from "../Components/imageComponent";
+import Button from "../Components/buttonComponent";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./buy.css";
 import React from "react";
-import MyLogo from "../images/mylogo.jpg";
 import TitleContainer from "../Components/containerComponent";
 
 var totalPrice;
 const BuyPage = (props) => {
   const { state } = useLocation();
   const offer = state;
-  const [text, setText] = useState(offer.price);
-  console.log(state.image);
-  const [imgSrc, setImgSrc] = useState(MyLogo);
+  const access_token = localStorage.getItem("access_token");
+
+  const [total, setTotal] = useState(offer.price);
+  const [quantity, setQuantity] = useState(1);
+  console.log(state);
+  const [imgSrc, setImgSrc] = useState([offer.image]);
   totalPrice = offer.price;
+  const navigate = useNavigate();
+  let btnText = "";
 
   const myFunc = (e) => {
     setImgSrc(
@@ -35,48 +38,38 @@ const BuyPage = (props) => {
       ></Image>
     );
   };
+
+  const handleSubmit = () => {
+    const usertoken = localStorage.getItem("access_token");
+    if (!usertoken) {
+      navigate("/login", { offer });
+    } else {
+      navigate("/checkout", { offer });
+    }
+  };
+
+  if (!access_token) {
+    btnText = "Login to check out";
+  } else {
+    btnText = "CheckOut";
+  }
   return (
     <div className="App">
       <TitleContainer></TitleContainer>
       <Row>
         <Col style={{ width: "50%" }}>
           <Row>
-            <Col className="column">
-              <Card
-                onClick={(e) => {
-                  myFunc(e);
-                }}
-              >
-                <CarouselImage></CarouselImage>
-              </Card>
-            </Col>
-            <Col className="column">
-              <Card
-                onClick={(e) => {
-                  myFunc(e);
-                }}
-              >
-                <CarouselImage></CarouselImage>
-              </Card>
-            </Col>
-            <Col className="column">
-              <Card
-                onClick={(e) => {
-                  myFunc(e);
-                }}
-              >
-                <CarouselImage></CarouselImage>
-              </Card>
-            </Col>
-            <Col className="column">
-              <Card
-                onClick={(e) => {
-                  myFunc(e);
-                }}
-              >
-                <CarouselImage></CarouselImage>
-              </Card>
-            </Col>
+            {offer.images.map((image) => (
+              <Col className="column" key={image.id}>
+                <Card
+                  onClick={(e) => {
+                    myFunc(e);
+                  }}
+                >
+                  <Image src={image.imagePath} alt="hello"></Image>
+                </Card>
+              </Col>
+            ))}
           </Row>
           <div className="container">
             <span
@@ -89,9 +82,6 @@ const BuyPage = (props) => {
             </span>
             <Card>
               <div>{imgSrc}</div>
-              <CardImgOverlay>
-                Login to continue with the check out
-              </CardImgOverlay>
             </Card>
           </div>
         </Col>
@@ -99,9 +89,11 @@ const BuyPage = (props) => {
           <br></br>
           <Card style={{ padding: "18px 16px" }}>
             <div className="row-wrapper">
-              <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                {offer.name}
-              </CardHeader>
+              <div className=" text-white text-center">
+                <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
+                  {offer.name}
+                </CardHeader>
+              </div>
               <CardBody>
                 <CardText>
                   <h3>{offer.description}</h3>
@@ -111,28 +103,33 @@ const BuyPage = (props) => {
                     {offer.price} per person.
                   </h3>
                   <div>
+                    <label htmlFor="customRange1" class="form-label">
+                      Select number of people travelling
+                    </label>
                     <input
-                      id="quantity"
-                      name="quant"
-                      style={{ width: "10%" }}
-                      type="number"
+                      type="range"
+                      class="form-range"
                       min={1}
-                      onChange={(e) => setText(calcTotal(e.target.value))}
+                      max={20}
                       defaultValue={1}
-                    />{" "}
-                    people people travelling to {offer.name}
+                      id="customRange1"
+                      onChange={(e) => setTotal(calcTotal(e.target.value))}
+                    ></input>
+                    {quantity + " "} people travelling to {offer.name}
                   </div>
-                  <div id="total">Total: R{text}</div>
+                  <div id="total">Total: R{total}</div>
                 </CardText>
-                <Button
-                  as={Link}
-                  to={"/login"}
-                  className="btn btn-secondary btn btn-primary"
-                  state={offer}
-                >
-                  Login to check out
-                </Button>
+                <CardText>
+                  <h3>Activities</h3>
+                </CardText>
               </CardBody>
+              <CardFooter>
+                {
+                  <Button onClick={handleSubmit} state={offer}>
+                    {btnText}
+                  </Button>
+                }
+              </CardFooter>
             </div>
           </Card>
           <br></br>
@@ -141,6 +138,7 @@ const BuyPage = (props) => {
     </div>
   );
   function calcTotal(p) {
+    setQuantity(p);
     totalPrice = offer.price * p;
     return totalPrice;
   }

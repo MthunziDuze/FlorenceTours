@@ -66,15 +66,15 @@ function PayFast() {
   //merchant_id 10636521
   //key 6kkcimrmnghwr
 
-  const handleSubmit = () => {
-    return fetch("http://localhost:8000/payfast", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(myData),
-    }).then((res) => res.json());
-  };
+  // const handleSubmit = () => {
+  //   return fetch("http://localhost:8000/payfast", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(myData),
+  //   }).then((res) => res.json());
+  // };
 
   return (
     <Form action="http://localhost:8000/payfast" method="post">

@@ -2,12 +2,13 @@ const db = require("../models");
 const Activity = db.activity;
 
 exports.create = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+  const authToken = req.headers.access_token;
+  if (!authToken) {
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
   if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
   if (!req.body.name) {
     res.status(403).send({ message: "Invalid Activity submited" });
@@ -19,17 +20,20 @@ exports.create = async (req, res) => {
   });
 
   if (activityDb !== null) {
-    res
-      .status(201)
-      .send({ message: "ACTIVITY EXISTS LOGIN OR SELECT FORGOT PASSWORD" });
-    return;
+    activityDb.name = req.body.name;
+    activityDb.description = req.body.description;
+    req.body.price = req.body.price;
+
+    try {
+      activityDb = await Activity.update(activityDb);
+      res.status(201).send({ message: "ACTIVITY UPDATED SUCCESSFULLY" });
+      return;
+    } catch (err) {
+      return res.status(500).send({ message: err.message });
+    }
   }
 
-  const activity = {
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-  };
+  const activity = req.body;
 
   Activity.create(activity)
     .then((data) => {
@@ -102,13 +106,17 @@ exports.update = (req, res) => {
     });
 };
 exports.delete = (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+  const authToken = req.headers.access_token;
+  if (!authToken) {
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
   if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
+  if (!req.params.id)
+    return res.status(500).send({ message: "INVALID REQUEST" });
+
   const id = req.params.id;
 
   Activity.destroy({

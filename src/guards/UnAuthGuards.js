@@ -5,16 +5,11 @@ const UnAuthGuard = ({ component }) => {
   const [status, setStatus] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    checkToken();
-  }, []);
-
   const checkToken = async () => {
     try {
-      let accessToken = localStorage.getItem("access_token");
-      console.log("woo hoo");
-      if (!accessToken) {
-        localStorage.removeItem("access_token");
+      let accessToken = localStorage.getItem("jwt");
+      if (accessToken) {
+        localStorage.removeItem("jwt");
       } else {
         setStatus(true);
       }
@@ -24,6 +19,10 @@ const UnAuthGuard = ({ component }) => {
       navigate("/");
     }
   };
+
+  useEffect(() => {
+    checkToken();
+  }, []);
   return status ? (
     <React.Fragment>{component}</React.Fragment>
   ) : (

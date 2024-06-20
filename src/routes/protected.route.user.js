@@ -1,13 +1,6 @@
+import React from "react";
 import { useEffect } from "react";
-import {
-  Route,
-  Redirect,
-  Navigate,
-  Outlet,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-import axios from "axios";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const ProtectedRouteUser = (props) => {
@@ -23,9 +16,9 @@ const ProtectedRouteUser = (props) => {
     }
 
     if (token && jwtDecode(token).userType !== "USER") {
-      presentPage();
+      navigate(-1);
     }
-  }, [token && jwtDecode(token).userType !== "USER"]);
+  }, [token, navigate]);
 
   const decodedData = jwtDecode(token);
 

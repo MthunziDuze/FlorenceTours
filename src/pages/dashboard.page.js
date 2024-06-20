@@ -14,7 +14,7 @@ function DashboardPage() {
       <div className="col-auto">
         <SidebarMenu />
       </div>
-      <div>
+      <div class="container">
         <Routes>
           <Route
             key={"userdashboad"}

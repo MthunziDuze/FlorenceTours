@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -30,8 +29,7 @@ const SignupPage = () => {
     console.log(customer);
     CustomerService.create(customer)
       .then((res) => {
-        const cust = res.data;
-        setCustomer(cust);
+        setCustomer(res.data);
 
         const myData = [];
         myData.push(offer);
@@ -62,9 +60,7 @@ const SignupPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <div className="container">
-              <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                Signup with Florence Tours
-              </CardTitle>
+              <CardTitle>Signup with Florence Tours</CardTitle>
               <CardBody>
                 <p className="title">Travel and Touring</p>
                 <Form onSubmit={handleSubmit}>

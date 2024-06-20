@@ -3,6 +3,9 @@ module.exports = (sequelize, Sequelize) => {
     price: {
       type: Sequelize.STRING,
     },
+    name: {
+      type: Sequelize.STRING,
+    },
     discount: {
       type: Sequelize.DOUBLE,
     },

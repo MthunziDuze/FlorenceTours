@@ -1,31 +1,25 @@
 const db = require("../models");
 const Location = db.location;
+const Images = db.images;
 const configs = require("../configs/app.config");
-const { validateAccessToken } = require("../service/login-service");
+const jwt = require("../utils/jwt.util");
 
 exports.create = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+  const authToken = req.headers.access_token;
+  if (!authToken) {
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
   if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
   if (!req.body.placename) {
-    res.status(403).send({ message: "Invalid Location submited" });
-    return;
+    return res.status(403).send({ message: "Invalid Location submited" });
   }
 
   const locationdb = await Location.findOne({
     where: { placename: req.body.placename },
   });
-
-  if (locationdb !== null) {
-    res
-      .status(201)
-      .send({ message: "LOCATION EXISTS LOGIN OR SELECT FORGOT PASSWORD" });
-    return;
-  }
 
   const location = {
     country: req.body.country,
@@ -34,39 +28,57 @@ exports.create = async (req, res) => {
     placename: req.body.placename,
   };
 
+  if (
+    locationdb !== null &&
+    (locationdb.country !== req.body.country ||
+      locationdb.country !== location.country ||
+      locationdb.province !== location.province ||
+      locationdb.image !== location.image)
+  ) {
+    locationdb.city = req.body.city;
+    locationdb.country = req.body.country;
+    locationdb.province = req.body.province;
+    locationdb.image = req.body.image;
+    Location.update(location)
+      .then((data) => {
+        res.send(data);
+      })
+      .catch((err) => {
+        res
+          .status(500)
+          .send({ message: err.message || "location cannot be created" });
+      });
+  }
+
   Location.create(location)
     .then((data) => {
-      res.send(data);
-      return;
+      res.json({ statusCode: 201, data: data });
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({ message: err.message || "location cannot be created" });
-      return;
+      res.status(500).json({ message: err.message });
     });
 };
 
 exports.findAll = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = validateAccessToken(req.header.ft_hearder);
-  if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const locations = await Location.findAll();
+  const response = await Location.findAll();
+
+  const locations = response;
   const locationsa = new Array();
-  locations.forEach((location) => {
-    locationsa.push(location);
-  });
-  res.send(JSON.stringify(locationsa));
+  if (locations) {
+    locations.forEach((location) => {
+      locationsa.push(location);
+    });
+  }
+  res.send(JSON.stringify(locations));
 };
 exports.findOne = async (req, res) => {
   if (!req.header.ft_hearder) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(
+    req.header.ft_hearder,
+    configs.JWT_SECRET_KEY
+  );
   if (!verified) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
@@ -83,7 +95,10 @@ exports.update = (req, res) => {
   if (!req.header.ft_hearder) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(
+    req.header.ft_hearder,
+    configs.JWT_SECRET_KEY
+  );
   if (!verified) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
@@ -111,7 +126,10 @@ exports.delete = (req, res) => {
   if (!req.header.ft_hearder) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = jwt.validateToken(
+    req.header.ft_hearder,
+    configs.JWT_SECRET_KEY
+  );
   if (!verified) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }

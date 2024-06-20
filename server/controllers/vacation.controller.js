@@ -1,40 +1,61 @@
 const db = require("../models");
 const Vacation = db.vacation;
+const Images = db.images;
+const Token = db.tokens;
+const jwt = require("../utils/jwt.util");
+const configs = require("../configs/app.config");
 
 exports.create = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
+  const authToken = req.headers.access_token;
+  if (!authToken) {
+    return res.status(500).send({ message: "INVALID REQUEST" });
   }
+  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
+  if (!verified) {
+    return res.status(500).send({ message: "INVALID REQUEST" });
+  }
+
   if (!req.body.locationId) {
     res.status(403).send({ message: "Invalid vacation submited" });
     return;
   }
 
-  const vacation = {
-    price: req.body.price,
-    discount: req.body.discount,
-    description: req.body.description,
-    fromDate: new Date(req.body.fromDate),
-    toDate: new Date(req.body.toDate),
-    locationId: req.body.locationId,
-  };
+  if (!req.body.name || !req.body.description) {
+    return res.status(403).send({ message: "Invalid Location submited" });
+  }
+
+  const vacationdb = await Vacation.findOne({
+    where: { name: req.body.name },
+  });
+
+  const vacation = req.body;
 
   Vacation.create(vacation)
     .then((data) => {
-      res.send(data);
-      return;
+      return res.send(data);
     })
     .catch((err) => {
-      res
+      return res
         .status(500)
-        .send({ message: err.message || "vacation cannot be created" });
-      return;
+        .send({ message: err.message || "Location cannot be created" });
     });
 };
 
-exports.findAll = (req, res) => {
-  Vacation.find;
+exports.findAll = async (req, res) => {
+  const response = await Vacation.findAll({
+    include: [{ model: Images, as: "images" }],
+  });
+
+  const vacations = response;
+  const vacationsa = new Array();
+  if (vacations) {
+    vacations.forEach((vacation) => {
+      vacationsa.push(vacation);
+    });
+  }
+  res.send(JSON.stringify(vacations));
 };
+
 exports.findOne = async (req, res) => {
   if (!req.header.ft_hearder) {
     res.status(500).send({ message: "INVALID REQUEST" });

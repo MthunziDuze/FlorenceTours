@@ -2,9 +2,11 @@ import React from "react";
 import HomePage from "../pages/homePage";
 import BuyPage from "../pages/buyComponent";
 import LoginPage from "../pages/loginPage";
-import SignupPage from "../pages/signupPage";
+import SignupPage from "../pages/signup.page";
 import { Route } from "react-router-dom";
 import UnAuthGuard from "../guards/UnAuthGuards";
+import AboutUsPage from "../pages/about.us";
+import ContactUsPage from "../pages/contact.us.page";
 
 const UnAuthRoutes = [
   <Route
@@ -26,6 +28,16 @@ const UnAuthRoutes = [
     key={"signupPage"}
     path="/signup"
     element={<UnAuthGuard component={<SignupPage />} />}
+  />,
+  <Route
+    key={"aboutUsPage"}
+    path="/about-us"
+    element={<UnAuthGuard component={<AboutUsPage />} />}
+  />,
+  <Route
+    key={"contactUsPage"}
+    path="/contact-us"
+    element={<UnAuthGuard component={<ContactUsPage />} />}
   />,
 ];
 export default UnAuthRoutes;

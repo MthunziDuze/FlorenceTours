@@ -1,7 +1,7 @@
 import TitleContainer from "../Components/containerComponent";
+import CarouselHeader from "../Components/carouselComponent";
 import Offerings from "../Components/offeringsComponent";
 import { Card, CardHeader } from "react-bootstrap";
-import CarouselHeader from "../Components/carouselComponent";
 import React from "react";
 const HomePage = () => {
   return (

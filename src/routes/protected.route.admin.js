@@ -1,13 +1,5 @@
-import { useEffect } from "react";
-import {
-  Route,
-  Redirect,
-  Navigate,
-  Outlet,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-import axios from "axios";
+import React, { useEffect } from "react";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const ProtectedRouteAdmin = (props) => {
@@ -17,15 +9,17 @@ const ProtectedRouteAdmin = (props) => {
     navigate(-1);
   }
 
+  var valid = token && jwtDecode(token).role !== "admin";
+
   useEffect(() => {
     if (!token) {
       return <Navigate to="/" />;
     }
 
-    if (token && jwtDecode(token).role !== "admin") {
+    if (valid) {
       presentPage();
     }
-  }, [token && jwtDecode(token).role !== "admin"]);
+  }, [valid, presentPage()]);
 
   const decodedData = jwtDecode(token);
 

@@ -21,6 +21,9 @@ module.exports = (sequelize, Sequelize) => {
     userType: {
       type: Sequelize.STRING,
     },
+    refreshToken: {
+      type: Sequelize.STRING,
+    },
   });
   return User;
 };

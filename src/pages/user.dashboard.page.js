@@ -60,8 +60,8 @@ const UserDashboardPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <div className="container">
-              <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                User Management Shadow..
+              <CardTitle style={{ backgroundColor: "white" }}>
+                offerings Management
               </CardTitle>
               <CardBody>
                 <p className="title">

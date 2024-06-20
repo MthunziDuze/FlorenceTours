@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import React from "react";
+import Button from "../Components/buttonComponent";
 import {
   Card,
   CardBody,
   CardTitle,
+  CardFooter,
   Col,
   Form,
   Row,
-  Button,
   Dropdown,
 } from "react-bootstrap";
+
+import axios from "axios";
 
 import vacationService from "../services/vacation.service";
 import locationService from "../services/location.service";
@@ -17,6 +20,13 @@ import locationService from "../services/location.service";
 const MyContext = React.createContext();
 
 const VacationPage = () => {
+  const [image, setImage] = useState({
+    preview: "",
+    raw: "",
+  });
+
+  const [data, setData] = useState([]);
+
   const [vacation, setVacation] = useState({
     price: "",
     description: "",
@@ -25,6 +35,44 @@ const VacationPage = () => {
     toDate: Date,
     locationId: 0,
   });
+
+  function handleUpload(e) {
+    if (e.target.files.length) {
+      setImage({
+        preview: URL.createObjectURL(e.target.files[0]),
+        raw: e.target.files[0],
+      });
+    }
+  }
+
+  const props = {
+    backgroundColor: "grey",
+    // onClick: handleSubmit(),
+    text: "Submit",
+  };
+
+  const uploadImage = async () => {
+    let formData = new FormData();
+    formData.append("image", image.raw);
+    console.log(vacation);
+    await axios
+      .post(`http://localhost:8000/api/images`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          vacationId: vacation.id,
+          access_token: localStorage.getItem("access_token"),
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   const updatefromDate = (fromDate) => {
     setVacation((previosState) => {
@@ -55,14 +103,6 @@ const VacationPage = () => {
       }
     });
   }
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const locations = await locationService.getAll();
-      setData(locations.data);
-    })();
-  }, []);
 
   function handleDateChange(e) {
     console.log(e.target.id);
@@ -74,6 +114,17 @@ const VacationPage = () => {
       updatetoDate(value);
     }
   }
+
+  useEffect(() => {
+    (async () => {
+      const response = await locationService.getAll();
+      let locations = response.data;
+
+      console.log(locations);
+
+      setData(locations);
+    })();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -103,55 +154,28 @@ const VacationPage = () => {
         <Col style={{ width: "50%" }}>
           <br></br>
           <Card className="card" style={{ padding: "18px 16px" }}>
-            <div className="list-group">
-              <label className="list-group-item d-flex gap-2">
-                <input
-                  class="form-check-input flex-shrink-0"
-                  type="radio"
-                  name="listGroupRadios"
-                  id="listGroupRadios1"
-                  value={""}
-                  checked
-                />
-                <span>
-                  First radio
-                  <small className="d-block text-body-secondary">
-                    With support text underneath to add more detail
-                  </small>
-                </span>
-              </label>
-              <label className="list-group-item d-flex gap-2">
-                <input
-                  className="form-check-input flex-shrink-0"
-                  type="radio"
-                  name="listGroupRadios"
-                  id="listGroupRadios2"
-                  value={""}
-                />
-                <span>
-                  Second radio
-                  <small className="d-block text-body-secondary">
-                    Some other text goes here
-                  </small>
-                </span>
-              </label>
-              <label className="list-group-item d-flex gap-2">
-                <input
-                  className="form-check-input flex-shrink-0"
-                  type="radio"
-                  name="listGroupRadios"
-                  id="listGroupRadios3"
-                  value={""}
-                />
-                <span>
-                  Third radio
-                  <small className="d-block text-body-secondary">
-                    And we end with another snippet of text
-                  </small>
-                </span>
-              </label>
-            </div>
+            {image.preview ? (
+              <img
+                src={image.preview}
+                alt="Upload-Preview"
+                width="300"
+                height="300"
+                className="my-10 mx-5"
+              />
+            ) : (
+              <>
+                <p>Upload Image</p>
+              </>
+            )}
             <CardTitle></CardTitle>
+            <CardFooter>
+              <input
+                name="image"
+                type="file"
+                id="upload-button"
+                onChange={handleUpload}
+              ></input>
+            </CardFooter>
           </Card>
         </Col>
         <Col style={{ width: "50%" }}>
@@ -167,6 +191,18 @@ const VacationPage = () => {
               <CardBody>
                 <p className="title">Here you can maintain vacation details </p>
                 <Form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label">
+                      Place Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      value={vacation.name || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
                   <div className="mb-3">
                     <label htmlFor="price" className="form-label">
                       Price
@@ -254,7 +290,16 @@ const VacationPage = () => {
                     </Dropdown>
                   </div>
                   <div className="mb-3">
-                    <Button type="Submit" className="submit-btn">
+                    <Button
+                      as="Link"
+                      name="image"
+                      type="file"
+                      id="upload-button"
+                      onClick={uploadImage}
+                    >
+                      Upload Image
+                    </Button>
+                    <Button type="Submit" {...props}>
                       Submit
                     </Button>
                   </div>

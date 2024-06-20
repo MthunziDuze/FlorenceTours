@@ -1,23 +1,45 @@
 import { Button, NavDropdown } from "react-bootstrap";
-//import DropdownComponent from "./dropdownComponent";
-import React, { useState } from "react";
-//import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-function NavBarComponent() {
-  // const [loggedIn, setLoggedIn] = useState(false);
+import { useNavigate } from "react-router-dom";
+import userService from "../services/user.service";
 
-  // const token = localStorage.getItem("access_token");
-  // if (token) {
-  //   setLoggedIn(true);
-  // } else {
-  //   setLoggedIn(false);
-  // }
+function NavBarComponent(props) {
+  const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const token = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    console.log("Inside Nav Bar....");
+    if (token) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
+    }
+  }, [loggedIn, token]);
+
+  const logout = () => {
+    userService
+      .logout()
+      .then((res) => {
+        console.log(res.data);
+        localStorage.removeItem("access_token");
+        //navigate(0);
+        return navigate("/login");
+      })
+      .catch((err) => {
+        console.log("err logging Out: ", err);
+      });
+
+    setLoggedIn(false);
+  };
 
   return (
     <nav
       className="navbar navbar-expand-sm bg-body-tertiary rounded"
-      aria-label="Thirteenth navbar example"
+      aria-label="Florence Tours NavBar"
     >
       <div className="container-fluid">
         <Button
@@ -48,20 +70,41 @@ function NavBarComponent() {
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/login">
-                Login
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="/dashboard/userdash"
+              >
+                Dashboard
               </a>
             </li>
+            {!loggedIn ? (
+              <li className="nav-item">
+                <a className="nav-link" href="/login">
+                  Login
+                </a>
+              </li>
+            ) : null}
             <li className="nav-item dropdown">
               <NavDropdown title="Learn More">
-                <NavDropdown.Item eventKey="4.1">Contact Us</NavDropdown.Item>
-                <NavDropdown.Item eventKey="4.2">About Us</NavDropdown.Item>
+                <NavDropdown.Item eventKey="4.1" href="/contact-us">
+                  Contact Us
+                </NavDropdown.Item>
+                <NavDropdown.Item eventKey="4.2" href="/about-us">
+                  About Us
+                </NavDropdown.Item>
                 <NavDropdown.Item eventKey="4.13">Vacations</NavDropdown.Item>
               </NavDropdown>
             </li>
           </ul>
           <div className="d-lg-flex col-lg-3 justify-content-lg-end">
-            <Button className="btn btn-secondary">Button</Button>
+            {loggedIn ? (
+              <Button className="btn btn-secondary" onClick={logout}>
+                Logout
+              </Button>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

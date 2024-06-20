@@ -5,7 +5,11 @@ class UserService {
     return http.post("/user", data);
   }
   login(data) {
-    return http.post("/user/login", data);
+    return http.post("/auth", data);
+  }
+
+  logout() {
+    return http.post("/auth/logout");
   }
 
   getAll() {

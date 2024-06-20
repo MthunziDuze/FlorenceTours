@@ -1,61 +1,34 @@
-const db = require("../models");
-const User = db.user;
 const configs = require("../configs/app.config");
-const jwt = require("../service/login-service");
+const jwt = require("../utils/jwt.util");
 const crypto = require("crypto");
-
-exports.login = async (req, res) => {
-  if (!req.body.username || !req.body.password) {
-    res.status(403).send({ message: "Invalid user submited" });
-    return;
-  }
-
-  const userdb = await User.findOne({
-    where: { username: req.body.username },
-  });
-  if (userdb == null) {
-    res.status(201).send({ message: "USER DOES NOT EXISTS, PLEASE SIGNUP.." });
-    return;
-  }
-
-  if (
-    userdb.password == encrptPasswod(req.body.password, configs.ENCRYPT_KEY)
-  ) {
-    let token = jwt.generateAccessToken(userdb);
-    console.log(token);
-    res.status(200).json({ message: "Login successful", access_token: token });
-  } else {
-    res.status(401).json({ message: "Invalid PASSWORD please try again..." });
-  }
-};
+const userService = require("../service/login-service");
 
 exports.create = async (req, res) => {
   if (!req.body.username || !req.body.password) {
     res.status(403).send({ message: "Invalid user submited" });
     return;
   }
+  const user = req.body;
 
-  const userdb = await User.findOne({
-    where: { username: req.body.username },
-  });
+  try {
+    const data = userService.signupUser(user);
+    return res.statusCode(201).json(data);
+  } catch (error) {
+    return res.error;
+  }
+};
 
-  if (userdb !== null) {
-    res
-      .status(201)
-      .send({ message: "USER EXISTS LOGIN OR SELECT FORGOT PASSWORD" });
+exports.confirmEmail = async (req, res) => {
+  if (!req.params.accessToken) {
+    res.status(403).send({ message: "Invalid token submited" });
     return;
   }
+  const access_token = req.params.accessToken;
 
-  const user = {
-    password: encrptPasswod(req.body.password, configs.ENCRYPT_KEY),
-    username: req.body.username,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    userType: "USER",
-    logintype: req.body.logintype,
-  };
+  var payload = jwt.validateToken(access_token);
+  const user = payload.user;
 
+  if (!user) return res.json(501, "Unauthorized!");
   User.create(user)
     .then((data) => {
       res.send(data);
@@ -69,16 +42,26 @@ exports.create = async (req, res) => {
     });
 };
 
+function validatePassword(password, dbPasswod) {
+  crypto.verify();
+}
+
 function encrptPasswod(password, secret) {
+  // Implementing pbkdf2Sync
   try {
-    // Implementing pbkdf2Sync
-    encrpted_key = crypto.pbkdf2Sync(password, secret, 100000, 100, "sha512");
-    return encrpted_key.toString("hex");
+    const encrypted = crypto.pbkdf2Sync(
+      password,
+      secret,
+      100000,
+      100,
+      "sha512"
+    );
+
+    return encrypted.toString("hex");
   } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Error generating password please try again later" });
-    return;
+    res.status(405).send({
+      message: "Error generating password please try again later",
+    });
   }
 }
 

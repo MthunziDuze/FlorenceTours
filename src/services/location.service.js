@@ -1,5 +1,4 @@
 import http from "../http-common";
-import api from "../interceptors/http.interceptor";
 
 class LocationService {
   create(data) {
@@ -7,8 +6,7 @@ class LocationService {
   }
 
   getAll() {
-    const token = localStorage.getItem("access_token");
-    return api.get("/location");
+    return http.get("/location");
   }
 
   get(id) {
