@@ -1,15 +1,15 @@
 const db = require("../models");
+const { validateToken } = require("../utils/jwt.util");
 const Activity = db.activity;
+const configs = require("../configs/app.config");
 
 exports.create = async (req, res) => {
+  console.log(req?.user);
   const authToken = req.headers.access_token;
   if (!authToken) {
     return res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
-  if (!verified) {
-    return res.status(500).send({ message: "INVALID REQUEST" });
-  }
+
   if (!req.body.name) {
     res.status(403).send({ message: "Invalid Activity submited" });
     return;
@@ -49,26 +49,14 @@ exports.create = async (req, res) => {
 };
 
 exports.findAll = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = validateAccessToken(req.header.ft_hearder);
-  if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
   const activities = await Activity.findAll();
 
   console.log(activities.every((activity) => activity instanceof Activity)); // true
   console.log("All activities:", JSON.stringify(activities, null, 2));
+
+  res.send(JSON.stringify(activities));
 };
 exports.findOne = async (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = validateAccessToken(req.header.ft_hearder);
-  if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
   const activityDb = await Activity.findOne({
     where: { id: req.params.id },
   });
@@ -78,11 +66,12 @@ exports.findOne = async (req, res) => {
   }
   res.send(user);
 };
+
 exports.update = (req, res) => {
-  if (!req.header.ft_hearder) {
+  if (!req.header.access_token) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }
-  const verified = validateAccessToken(req.header.ft_hearder);
+  const verified = validateAccessToken(req.header.access_token);
   if (!verified) {
     res.status(500).send({ message: "INVALID REQUEST" });
   }

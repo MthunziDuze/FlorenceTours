@@ -16,16 +16,17 @@ exports.sendEmail = (templateName, locals, user, subject, callback) => {
       rejectUnauthorized: false,
     },
   });
-
+  var templatePath = `../emails/templates/${templateName}.hbs`;
+  console.log(template);
   const mailTemplateSource = fs.readFileSync(
-    path.join(__dirname, "../emails/verifypassword.hbs"),
+    path.join(__dirname, templatePath),
     "utf8"
   );
 
   const template = handlebars.compile(mailTemplateSource);
 
   var mailOptions = {
-    from: "aletta.nomasonto@gmail.com",
+    from: configs.EMAIL_USER,
     to: {
       name: user.firstname,
       address: user.email,

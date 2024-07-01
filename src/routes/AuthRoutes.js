@@ -6,6 +6,7 @@ import ActivityPage from "../pages/activity.page";
 import OfferPage from "../pages/offer.page";
 import VacationPage from "../pages/vacationPage";
 import CheckOutPage from "../pages/checkOutPage";
+import LocationActivityPage from "../pages/location.activity.page";
 
 const AuthRoutes = [
   <Route
@@ -34,6 +35,11 @@ const AuthRoutes = [
     key={"checkOut"}
     path="/checkout"
     element={<AuthGuard component={<CheckOutPage />} />}
+  />,
+  <Route
+    key={"location-activity"}
+    path="/location-activity"
+    element={<AuthGuard component={<LocationActivityPage />} />}
   />,
 ];
 export default AuthRoutes;

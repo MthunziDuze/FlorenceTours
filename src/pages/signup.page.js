@@ -27,7 +27,10 @@ const SignupPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(customer);
-    CustomerService.create(customer)
+    CustomerService.create({
+      accessToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdG5hbWUiOiJNdGh1bnppIiwibGFzdG5hbWUiOiJEdXplIiwiZW1haWwiOiJtdGh1bnppZHV6ZUBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im10aHVuemlkdXplIiwicGFzc3dvcmQiOiJjMWY1YmNhMjYwYzhmM2ViMDViZDMyZGE2NGFiNTE5ZTA1MGU0Zjg5MmVlYmQ4M2E5M2NmYmUzYjdkODIwODk3NTAwYjExYTllZmYyNmFkOGU0OGE5NWY4NDlkNGUxODRiOTJlYzVlZGVhYWQzYjQ3MTQ5ZmFhZTM5NzJiZDM5OGNhOTBjNDcyZjA5OTE4OTZkNTM1M2U0ZjU2NmJhMjgwNjZjNGVhNzYxMTM0MzA2NzBiOTc5OTRiOGM1NDNmZWMxYTI5YTMyNyIsInVzZXJUeXBlIjoiVVNFUiIsImlhdCI6MTcxOTQ0Nzc5OCwiZXhwIjoxNzIxMTY3MjQ2OTQ3fQ.RVUPAbEoc6EvEZbtezXew71bsrCFv8-XCahMQBQY9SQ",
+    })
       .then((res) => {
         setCustomer(res.data);
 

@@ -7,6 +7,7 @@ import LocationPage from "./locationPage";
 import ActivityPage from "./activity.page";
 import AuthGuard from "../guards/AuthGuards";
 import UserDashboardPage from "./user.dashboard.page";
+import LocationActivityPage from "./location.activity.page";
 
 function DashboardPage() {
   return (
@@ -14,7 +15,7 @@ function DashboardPage() {
       <div className="col-auto">
         <SidebarMenu />
       </div>
-      <div class="container">
+      <div className="container">
         <Routes>
           <Route
             key={"userdashboad"}
@@ -30,6 +31,11 @@ function DashboardPage() {
             key={"vacation"}
             path="/dashboard/vacation"
             element={<AuthGuard component={<VacationPage />} />}
+          />
+          <Route
+            key={"vacationActivity"}
+            path="/dashboard/location-activity"
+            element={<AuthGuard component={<LocationActivityPage />} />}
           />
           <Route
             key={"activity"}

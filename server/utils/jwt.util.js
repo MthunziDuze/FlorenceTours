@@ -10,3 +10,29 @@ exports.validateToken = (access_token, secret) => {
     return res;
   });
 };
+exports.generateTokens = (payload) => {
+  const newRefreshToken = jwt.sign(
+    {
+      payload: {
+        username: payload.username,
+        lastname: payload.lastname,
+        userType: payload.userType,
+      },
+    },
+    configs.JWT_REFRESH_TOKEN,
+    { expiresIn: configs.REFRESH_TOKEN_EXPIRES }
+  );
+
+  const newAccessToken = jwt.sign(
+    {
+      payload: {
+        username: payload.username,
+        lastname: payload.lastname,
+        userType: payload.userType,
+      },
+    },
+    configs.JWT_SECRET_KEY,
+    { expiresIn: configs.ACCESS_TOKEN_EXPIRES }
+  );
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+};

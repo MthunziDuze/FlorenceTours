@@ -16,9 +16,7 @@ import activityService from "../services/activity.service";
 const MyContext = React.createContext();
 
 const ActivityPage = () => {
-  const navigate = useNavigate();
   const { state } = useLocation();
-
   const offer = state;
 
   const [activity, setActivity] = useState({});
@@ -31,15 +29,8 @@ const ActivityPage = () => {
     activityService
       .create(activity)
       .then((res) => {
-        const activ = res.data;
-        setActivity(activ);
-
-        const myData = [];
-        myData.push(offer);
-        myData.push(activity);
+        setActivity(res.data);
         console.log(res);
-
-        return navigate("/checkout", { state: myData });
       })
       .catch((err) => {
         console.log("err saving activity info", err);
@@ -90,18 +81,6 @@ const ActivityPage = () => {
                       className="form-control"
                       id="description"
                       value={activity.description || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="price" className="form-label">
-                      Activity Price
-                    </label>
-                    <input
-                      type="price"
-                      className="form-control"
-                      id="price"
-                      value={activity.price || ""}
                       onChange={handleChange}
                     />
                   </div>

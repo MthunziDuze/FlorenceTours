@@ -9,6 +9,7 @@ import {
   Form,
   Row,
   Button,
+  CardHeader,
 } from "react-bootstrap";
 
 import CarouselImage from "../Components/imageComponent";
@@ -69,7 +70,6 @@ const OfferPage = () => {
           <br></br>
           <Card className="card" style={{ padding: "18px 16px" }}>
             <CarouselImage></CarouselImage>
-            <CardTitle></CardTitle>
           </Card>
         </Col>
         <Col style={{ width: "50%" }}>
@@ -79,11 +79,13 @@ const OfferPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <div className="container">
-              <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                Signup with Florence Tours
-              </CardTitle>
+              <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
+                <CardTitle style={{ color: "white" }}>
+                  Maintain Offerings
+                </CardTitle>
+              </CardHeader>
               <CardBody>
-                <p className="title">Maintain Offers Here</p>
+                <h2 className="title">Maintain Offers Here</h2>
                 <Form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">

@@ -1,7 +1,9 @@
 const configs = require("../configs/app.config");
-const jwt = require("../utils/jwt.util");
+const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const userService = require("../service/login-service");
+const db = require("../models");
+const User = db.user;
 
 exports.create = async (req, res) => {
   if (!req.body.username || !req.body.password) {
@@ -19,14 +21,18 @@ exports.create = async (req, res) => {
 };
 
 exports.confirmEmail = async (req, res) => {
-  if (!req.params.accessToken) {
+  const access_token = req.params.accessToken;
+  if (!access_token) {
     res.status(403).send({ message: "Invalid token submited" });
     return;
   }
-  const access_token = req.params.accessToken;
+  //const access_token = req.params.accessToken;
 
-  var payload = jwt.validateToken(access_token);
-  const user = payload.user;
+  var payload = jwt.verify(
+    req.body.accessToken,
+    configs.MAIL_CONFIRMATION_TOKEN
+  );
+  const user = payload;
 
   if (!user) return res.json(501, "Unauthorized!");
   User.create(user)

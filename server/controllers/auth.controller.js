@@ -63,26 +63,6 @@ exports.handleLogin = async (req, res) => {
       });
 
     let refreshToken = "";
-    if (!cookies?.jwt) {
-      refreshToken = cookies?.jwt;
-      const foundRefreshToken = await Token.findOne({
-        where: { token: refreshToken },
-      })
-        .then((response) => {
-          console.log(response);
-          return response;
-        })
-        .catch((error) => {
-          console.log(error);
-
-          console.log(err);
-          res.status(403).json(err.message).end();
-        });
-
-      const response = await Token.destroy({
-        where: { token: refreshToken },
-      });
-    }
 
     const accessToken = jwt.sign(
       {
@@ -93,7 +73,7 @@ exports.handleLogin = async (req, res) => {
         },
       },
       configs.JWT_SECRET_KEY,
-      { expiresIn: configs.ACCESS_TOKEN_EXPIRES }
+      { expiresIn: 600 + Date.now() }
     );
 
     refreshToken = jwt.sign(
@@ -105,7 +85,7 @@ exports.handleLogin = async (req, res) => {
         },
       },
       configs.JWT_REFRESH_TOKEN,
-      { expiresIn: configs.REFRESH_TOKEN_EXPIRES }
+      { expiresIn: 7776000 + Date.now() }
     );
 
     refreshToken = await Token.create({
@@ -206,7 +186,7 @@ exports.refreshAccessToken = async (req, res) => {
 
             payload = data.payload;
             newTokens = generateTokens(payload);
-            foundRefreshToken.token = newTokens.refreshAccessToken;
+            foundRefreshToken.token = newTokens.refreshToken;
             foundRefreshToken.save();
             res.cookie("jwt", refreshToken.token, {
               httpOnly: false,
@@ -237,7 +217,7 @@ exports.handleLogout = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
 
-  const refreshToken = JSON.parse(cookies.jwt);
+  const refreshToken = cookies.jwt;
   const foundRefreshToken = await Token.findOne({
     where: { token: refreshToken },
   });
@@ -266,7 +246,7 @@ function generateTokens(payload) {
       },
     },
     configs.JWT_REFRESH_TOKEN,
-    { expiresIn: configs.REFRESH_TOKEN_EXPIRES }
+    { expiresIn: 600 + Date.now() }
   );
 
   const newAccessToken = jwt.sign(
@@ -278,7 +258,7 @@ function generateTokens(payload) {
       },
     },
     configs.JWT_SECRET_KEY,
-    { expiresIn: configs.ACCESS_TOKEN_EXPIRES }
+    { expiresIn: 7776000 + Date.now() }
   );
   return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 }

@@ -32,29 +32,39 @@ db.images = require("./images.model.js")(sequelize, Sequelize);
 db.location = require("./location.model.js")(sequelize, Sequelize);
 db.activity = require("./activity.model.js")(sequelize, Sequelize);
 db.vacation = require("./vacation.model.js")(sequelize, Sequelize);
-db.vacationactivity = require("./vacation.activity.model.js")(
+db.locationactivity = require("./location.activity.model.js")(
   sequelize,
   Sequelize
 );
 
+db.user.hasMany(db.tokens, { as: "refreshTokens" });
+db.tokens.belongsTo(db.user, { foreignKey: "userId" });
+
 db.customer.hasMany(db.offer, { as: "offers" });
 db.offer.belongsTo(db.customer, { foreignKey: "customerId", as: "customer" });
-
-db.location.hasMany(db.vacation, { as: "vacations" });
-db.vacation.belongsTo(db.location, { foreignKey: "locationId" });
 
 db.vacation.hasMany(db.images, { as: "images" });
 db.images.belongsTo(db.vacation, { foreignKey: "vacationId" });
 
-db.vacation.hasMany(db.vacationactivity, { as: "activities" });
-db.vacationactivity.belongsTo(db.vacation, { foreignKey: "vacationId" });
+db.vacation.belongsToMany(db.locationactivity, {
+  through: "vacation_locationActivity",
+  as: "location_ activities",
+  foreignKey: "vacationId",
+});
 
-db.user.hasMany(db.tokens, { as: "refreshTokens" });
-db.tokens.belongsTo(db.user, { foreignKey: "userId" });
+db.locationactivity.belongsToMany(db.vacation, {
+  through: "vacation_locationActivity",
+  as: "vacations",
+  foreignKey: "locationActivityId",
+});
+
+db.locationactivity.belongsTo(db.location, { foreignKey: "locationId" });
+db.location.hasMany(db.locationactivity, { as: "location_activities" });
 
 db.vacation.hasMany(db.offer, { as: "offers" });
 db.offer.belongsTo(db.vacation, { foreignKey: "vacationId" });
 
-db.activity.hasMany(db.vacationactivity, { as: "vacation_activities" });
+db.activity.hasMany(db.locationactivity, { as: "location_activities" });
+db.locationactivity.belongsTo(db.activity, { foreignKey: "activityId" });
 
 module.exports = db;

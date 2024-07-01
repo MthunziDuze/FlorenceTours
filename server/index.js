@@ -13,7 +13,7 @@ try {
 }
 
 db.sequelize
-  .sync()
+  .sync("FORCE")
   .then(() => {
     console.log("Sync db");
   })
@@ -40,6 +40,7 @@ require("./routes/activity.routes.js")(app);
 require("./routes/location.routes.js")(app);
 require("./routes/vacation.routes.js")(app);
 require("./routes/image.routes.js")(app);
+require("./routes/location.activity.routes.js")(app);
 
 app.listen(8000, () => {
   console.log("server listing on url", "localhost 8000");

@@ -81,7 +81,7 @@ exports.paynow = async (data) => {
     body: dataString,
   });
   console.log(res);
-  const jsonData = handleResponse(res);
+  handleResponse(res);
 };
 exports.handleResponse = async (response) => {
   if (response.status == 200 || response.status == 201) {

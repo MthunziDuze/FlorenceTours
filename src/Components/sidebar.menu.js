@@ -8,19 +8,19 @@ function SidebarMenu() {
     {
       title: "Locations",
       path: "location",
-      icon: "bi bi-speedometer2 me-2",
+      icon: "bi bi-geo-alt me-2",
       className: "nav-item p-1",
     },
     {
       title: "Offer",
       path: "offer",
-      icon: "bi bi-speedometer2 me-2",
+      icon: "bi bi-handbag me-2",
       className: "nav-item p-1",
     },
     {
       title: "vacation",
       path: "vacation",
-      icon: "bi bi-grid me-2",
+      icon: "bi bi-airplane me-2",
       className: "nav-item p-1",
     },
     {
@@ -29,14 +29,20 @@ function SidebarMenu() {
       icon: "bi bi-grid me-2",
       className: "nav-item p-1",
     },
+    {
+      title: "Location Activity",
+      path: "location-activity",
+      icon: "bi bi-backpack2 me-2",
+      className: "nav-item p-1",
+    },
   ];
 
   return (
-    <div className="sidebar d-flex flex-column justify-content-between bg-dark text-white p-4 vh-100">
+    <div className="sidebar d-flex flex-column justify-content-between bg-secondary text-white p-4 vh-100">
       <div>
         <a href="d-flex align-items-center">
           <i className="bi bi-bootstrap fs-5 me-2"></i>
-          <span className="fs-4">Manage Offers</span>
+          <span className="fs-4">Florence Tours</span>
         </a>
         <hr className="text-secondary mt-2" />
         <ul className="nav nav-pills flex-column p-0 m-0">

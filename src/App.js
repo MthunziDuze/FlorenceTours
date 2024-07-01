@@ -16,6 +16,7 @@ import NavBarComponent from "./Components/navBarComponent";
 import ProtectedRouteAdmin from "./routes/protected.route.admin";
 import ProtectedRouteUser from "./routes/protected.route.user";
 import CheckOutPage from "./pages/checkOutPage";
+import LocationActivityPage from "./pages/location.activity.page";
 
 function App() {
   return (
@@ -50,6 +51,13 @@ function App() {
               key={"activity"}
               path="/dashboard/activity"
               element={<AuthGuard component={<ActivityPage />} />}
+            />
+          </Route>
+          <Route element={<ProtectedRouteAdmin />}>
+            <Route
+              key={"vacationActivity"}
+              path="/dashboard/location-activity"
+              element={<AuthGuard component={<LocationActivityPage />} />}
             />
           </Route>
           <Route element={<ProtectedRouteAdmin />}>

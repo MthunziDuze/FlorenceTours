@@ -2,61 +2,46 @@ const db = require("../models");
 const Location = db.location;
 const Images = db.images;
 const configs = require("../configs/app.config");
-const jwt = require("../utils/jwt.util");
+
+const jwt = require("jsonwebtoken");
 
 exports.create = async (req, res) => {
-  const authToken = req.headers.access_token;
-  if (!authToken) {
-    return res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
-  if (!verified) {
-    return res.status(500).send({ message: "INVALID REQUEST" });
-  }
+  const user = req.headers.user;
+  let payload = {};
+
   if (!req.body.placename) {
     return res.status(403).send({ message: "Invalid Location submited" });
   }
 
-  const locationdb = await Location.findOne({
-    where: { placename: req.body.placename },
-  });
+  let locationdb = {};
 
-  const location = {
-    country: req.body.country,
-    province: req.body.province,
-    city: req.body.city,
-    placename: req.body.placename,
-  };
+  if (req.body.id) {
+    locationdb = await Location.findOne({
+      where: { id: req.body.id },
+    });
 
-  if (
-    locationdb !== null &&
-    (locationdb.country !== req.body.country ||
-      locationdb.country !== location.country ||
-      locationdb.province !== location.province ||
-      locationdb.image !== location.image)
-  ) {
-    locationdb.city = req.body.city;
     locationdb.country = req.body.country;
     locationdb.province = req.body.province;
-    locationdb.image = req.body.image;
-    Location.update(location)
+    locationdb.city = req.body.city;
+    locationdb.placename = req.body.placename;
+    locationdb
+      .save()
       .then((data) => {
-        res.send(data);
+        res.json({ statusCode: 201, data: data });
       })
       .catch((err) => {
-        res
-          .status(500)
-          .send({ message: err.message || "location cannot be created" });
+        res.status(500).json({ message: err.message });
+      });
+  } else {
+    const location = req.body;
+    Location.create(location)
+      .then((data) => {
+        res.json({ statusCode: 201, data: data });
+      })
+      .catch((err) => {
+        res.status(500).json({ message: err.message });
       });
   }
-
-  Location.create(location)
-    .then((data) => {
-      res.json({ statusCode: 201, data: data });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err.message });
-    });
 };
 
 exports.findAll = async (req, res) => {
@@ -92,17 +77,6 @@ exports.findOne = async (req, res) => {
   res.send(location);
 };
 exports.update = (req, res) => {
-  if (!req.header.ft_hearder) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = jwt.validateToken(
-    req.header.ft_hearder,
-    configs.JWT_SECRET_KEY
-  );
-  if (!verified) {
-    res.status(500).send({ message: "INVALID REQUEST" });
-  }
-
   const id = req.params.id;
   Location.update(req.body, {
     id: id,

@@ -16,15 +16,20 @@ exports.create = async (req, res) => {
     where: { id: vacationId },
   });
 
-  if (!vacation)
-    return res
-      .status(403)
-      .send({ message: "You need to save the vacation first!!" });
+  if (req.files)
+    if (!vacation)
+      return res
+        .status(403)
+        .send({ message: "You need to save the vacation first!!" });
 
   const files = uploadImages(req, res, function (err) {
     if (err) {
       return res.status(400).send({ message: err.message });
     }
+    if (req.files.length < 1)
+      return res
+        .status(403)
+        .send({ message: "You need to select images first!!" });
 
     const files = req.files;
     console.log(JSON.stringify(files));
@@ -51,6 +56,11 @@ exports.create = async (req, res) => {
       });
   });
 };
+
+// exports.delete = async (req, res)=> {
+//   const {id} = req.params.id;
+//   const fileData = await File.findById
+// }
 
 exports.upload = async (req, res) => {
   uploadImages(req, res, function (err) {

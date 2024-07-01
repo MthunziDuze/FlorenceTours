@@ -1,5 +1,4 @@
 import Offer from "./cardTitle";
-//import { data } from "./offeringList";
 import style from "../pages/home-style.module.css";
 import React, { useEffect, useState } from "react";
 import vacationService from "../services/vacation.service";
@@ -20,13 +19,13 @@ const Offerings = () => {
   useEffect(() => {
     (async () => {
       const response = await vacationService.getAll();
-      let vacatioms = response.data;
-      vacatioms.map((vac) => {
+      let vacations = new Array([]);
+      vacations = response.data;
+      vacations.forEach((vac) => {
         vac.image = vac.images[0]?.imagePath;
         console.log(vac);
       });
-      console.log(vacatioms);
-      setData(vacatioms);
+      setData(vacations);
     })();
   }, []);
   return (

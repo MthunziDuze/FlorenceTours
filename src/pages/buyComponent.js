@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  CardText,
+  CardTitle,
   Col,
   Image,
   Row,
@@ -14,18 +14,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./buy.css";
 import React from "react";
 import TitleContainer from "../Components/containerComponent";
+import locationActivityService from "../services/location.activity.service";
 
 var totalPrice;
 const BuyPage = (props) => {
   const { state } = useLocation();
-  const offer = state;
+  const vacation = state;
   const access_token = localStorage.getItem("access_token");
 
-  const [total, setTotal] = useState(offer.price);
+  const [total, setTotal] = useState(vacation.price);
   const [quantity, setQuantity] = useState(1);
   console.log(state);
-  const [imgSrc, setImgSrc] = useState([offer.image]);
-  totalPrice = offer.price;
+  const [imgSrc, setImgSrc] = useState([vacation.image]);
+  totalPrice = vacation.price;
   const navigate = useNavigate();
   let btnText = "";
 
@@ -42,9 +43,9 @@ const BuyPage = (props) => {
   const handleSubmit = () => {
     const usertoken = localStorage.getItem("access_token");
     if (!usertoken) {
-      navigate("/login", { offer });
+      navigate("/login", { vacation });
     } else {
-      navigate("/checkout", { offer });
+      navigate("/checkout", { vacation });
     }
   };
 
@@ -53,13 +54,26 @@ const BuyPage = (props) => {
   } else {
     btnText = "CheckOut";
   }
+
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    (async () => {
+      console.log(state);
+      const response = await locationActivityService.findByVactiobId(state.id);
+      console.log(response);
+      let vacationActivities = new Array([]);
+      vacationActivities = response.data;
+
+      setData(vacationActivities);
+    })();
+  }, []);
   return (
     <div className="App">
       <TitleContainer></TitleContainer>
       <Row>
         <Col style={{ width: "50%" }}>
           <Row>
-            {offer.images.map((image) => (
+            {vacation.images.map((image) => (
               <Col className="column" key={image.id}>
                 <Card
                   onClick={(e) => {
@@ -91,41 +105,53 @@ const BuyPage = (props) => {
             <div className="row-wrapper">
               <div className=" text-white text-center">
                 <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                  {offer.name}
+                  <CardTitle style={{ color: "white" }}>
+                    {vacation.name}
+                  </CardTitle>
                 </CardHeader>
               </div>
               <CardBody>
-                <CardText>
-                  <h3>{offer.description}</h3>
-                  <br></br>
-                  <h3>
-                    Your GateAway To Unforgettable Adventure FOR JUST R
-                    {offer.price} per person.
-                  </h3>
-                  <div>
-                    <label htmlFor="customRange1" class="form-label">
-                      Select number of people travelling
-                    </label>
-                    <input
-                      type="range"
-                      class="form-range"
-                      min={1}
-                      max={20}
-                      defaultValue={1}
-                      id="customRange1"
-                      onChange={(e) => setTotal(calcTotal(e.target.value))}
-                    ></input>
-                    {quantity + " "} people travelling to {offer.name}
+                <h3>{vacation.description}</h3>
+                <br></br>
+                <h3>
+                  Your GateAway To Unforgettable Adventure FOR JUST R
+                  {vacation.price} per person.
+                </h3>
+                <div>
+                  <label htmlFor="customRange1" className="form-label">
+                    Select number of people travelling
+                  </label>
+                  <input
+                    type="range"
+                    className="form-range"
+                    min={1}
+                    max={20}
+                    defaultValue={1}
+                    id="customRange1"
+                    onChange={(e) => setTotal(calcTotal(e.target.value))}
+                  ></input>
+                  {quantity + " "} people travelling to {vacation.name}
+                </div>
+                <div id="total">Total: R{total}</div>
+                <div className=" text-white text-center">
+                  <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
+                    <CardTitle style={{ color: "white" }}>Activities</CardTitle>
+                  </CardHeader>
+                </div>
+                <div>
+                  <div class="container">
+                    {data.map((activity) => (
+                      <div className="row" key={activity.id}>
+                        <div className="col">{activity.name}</div>
+                        <div className="col">{activity.price}</div>
+                      </div>
+                    ))}
                   </div>
-                  <div id="total">Total: R{total}</div>
-                </CardText>
-                <CardText>
-                  <h3>Activities</h3>
-                </CardText>
+                </div>
               </CardBody>
               <CardFooter>
                 {
-                  <Button onClick={handleSubmit} state={offer}>
+                  <Button onClick={handleSubmit} state={vacation}>
                     {btnText}
                   </Button>
                 }
@@ -139,7 +165,7 @@ const BuyPage = (props) => {
   );
   function calcTotal(p) {
     setQuantity(p);
-    totalPrice = offer.price * p;
+    totalPrice = vacation.price * p;
     return totalPrice;
   }
 };

@@ -35,20 +35,24 @@ exports.signupUser = async (user) => {
   user.password = encrptPasswod(user.password, configs.ENCRYPT_KEY);
   user.userType = "USER";
 
-  var confirmationToken = jwt.generateToken(
-    user,
-    configs.MAIL_CONFIRMATION_TOKEN,
-    60 * 10
+  var confirmationToken = jwt.sign(user, configs.MAIL_CONFIRMATION_TOKEN, {
+    expiresIn: 6000 + Date.now(),
+  });
+  console.log(
+    "confirmation Token: " +
+      configs.BACKEND_ENDPOINT +
+      configs.CONFIRMATION_URL +
+      confirmationToken
   );
 
-  var guestAccessToken = jwt.generateToken(
+  var guestAccessToken = jwt.sign(
     {
       username: user.username,
       firstname: user.firstname,
       lastname: user.lastname,
     },
     configs.MAIL_CONFIRMATION_TOKEN,
-    60 * 30
+    { expiresIn: 180000 + Date.now() }
   );
 
   var locals = {
@@ -70,6 +74,41 @@ exports.signupUser = async (user) => {
     }
   );
   return userController.createUser;
+};
+
+exports.resetPassword = async (user) => {
+  const userdb = await UserDao.findOne({
+    where: { username: user.username },
+  }).then((user) => {
+    if (!user) throw handleResponse(Error("User not found"));
+    jwt.sign(
+      {
+        username: user.username,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      },
+      configs.MAIL_CONFIRMATION_TOKEN,
+      { expiresIn: 240000 + Date.now() }
+    );
+  });
+  var locals = {
+    COMPANY: "FlorenceTours",
+    CONFIRMATION_URL: configs.BACKEND_ENDPOINT + configs.CONFIRMATION_URL,
+    MAIL_CONFIRMATION_TOKEN: confirmationToken,
+    name: user.firstname + " " + user.lastname,
+  };
+
+  emailService.sendEmail(
+    "verifyEmail",
+    locals,
+    user,
+    "Verify account",
+    function (err, res) {
+      if (err) throw err;
+      console.log(res);
+      return { token: guestAccessToken };
+    }
+  );
 };
 
 function handleResponse(response) {

@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const VacationActivity = sequelize.define("vacationactivity", {
+  const LocationActivity = sequelize.define("location_activity", {
     price: {
       type: Sequelize.STRING,
     },
@@ -15,12 +15,12 @@ module.exports = (sequelize, Sequelize) => {
     endDate: {
       type: Sequelize.DATE,
     },
-    vacationId: {
-      type: Sequelize.INTEGER,
-    },
     locationId: {
       type: Sequelize.INTEGER,
     },
+    activityId: {
+      type: Sequelize.INTEGER,
+    },
   });
-  return VacationActivity;
+  return LocationActivity;
 };

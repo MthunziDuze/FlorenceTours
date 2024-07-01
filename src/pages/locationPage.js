@@ -7,8 +7,8 @@ import {
   Col,
   Form,
   Row,
-  CardFooter,
   CardHeader,
+  CardTitle,
 } from "react-bootstrap";
 import Button from "../Components/buttonComponent";
 
@@ -50,6 +50,11 @@ const LocationPage = () => {
     })();
   }, []);
 
+  const handleEdit = (location) => {
+    console.log(location);
+    setLocation(location);
+  };
+
   return (
     <MyContext.Provider value={offer}>
       <Row>
@@ -60,7 +65,9 @@ const LocationPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-              Location Management
+              <CardTitle style={{ color: "white" }}>
+                Location Management
+              </CardTitle>
             </CardHeader>
             <CardBody>
               <p className="title">Here you can maintain location details </p>
@@ -113,47 +120,35 @@ const LocationPage = () => {
                     onChange={handleChange}
                   />
                 </div>
-
-                <div className="mb-3">
-                  <label htmlFor="placename" className="form-label">
-                    Place Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="placename"
-                    value={location.placename || ""}
-                    onChange={handleChange}
-                  />
+                <br></br>
+                <div class="row">
+                  <div class="col">
+                    <div class="container">
+                      {locations?.map((locatio, index) => {
+                        return (
+                          <div class="row" key={index}>
+                            <div class="col">{locatio.placename}</div>
+                            <div class="col">{locatio.city}</div>
+                            <div class="col">
+                              <Button onClick={() => handleEdit(locatio)}>
+                                Edit Location
+                              </Button>
+                            </div>
+                            <br></br>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <Button onClick={handleSubmit}>Save Location</Button>
                 </div>
               </Form>
             </CardBody>
-            <CardFooter>
-              <div>
-                <Button onClick={handleSubmit}>Save Location</Button>
-              </div>
-            </CardFooter>
           </Card>
         </Col>
       </Row>
-
-      <div class="row">
-        <div class="col">
-          <div class="container">
-            {locations?.map((locatio, index) => {
-              return (
-                <div class="row" key={index}>
-                  <div class="col">{locatio.placename}</div>
-                  <div class="col">{locatio.city}</div>
-                  <div class="col">
-                    <Button onClick={handleChange}>Edit Location</Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
     </MyContext.Provider>
   );
 };

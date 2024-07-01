@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import authService from "../services/auth.service";
 
 const AuthGuard = ({ component }) => {
@@ -13,7 +12,7 @@ const AuthGuard = ({ component }) => {
       if (!accessToken) {
         throw new Error("Unauthorized");
       }
-      const response = await authService
+      await authService
         .validateToken(accessToken)
         .then((res) => {
           console.log(res);

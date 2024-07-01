@@ -23,9 +23,9 @@ const ProtectedRouteAdmin = (props) => {
 
   const decodedData = jwtDecode(token);
 
-  if (decodedData.role === "admin") {
+  if (decodedData.role === "ADMIN") {
     return <Outlet {...props} />;
-  } else if (decodedData.role !== "admin") {
+  } else if (decodedData.role !== "ADMIN") {
     presentPage();
   }
 };

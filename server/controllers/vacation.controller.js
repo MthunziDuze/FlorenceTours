@@ -1,21 +1,12 @@
 const db = require("../models");
 const Vacation = db.vacation;
+const LocationActivity = db.locationactivity;
 const Images = db.images;
-const Token = db.tokens;
 const jwt = require("../utils/jwt.util");
 const configs = require("../configs/app.config");
 
 exports.create = async (req, res) => {
-  const authToken = req.headers.access_token;
-  if (!authToken) {
-    return res.status(500).send({ message: "INVALID REQUEST" });
-  }
-  const verified = jwt.validateToken(authToken, configs.JWT_SECRET_KEY);
-  if (!verified) {
-    return res.status(500).send({ message: "INVALID REQUEST" });
-  }
-
-  if (!req.body.locationId) {
+  if (!req.body.locationActivityId) {
     res.status(403).send({ message: "Invalid vacation submited" });
     return;
   }
@@ -23,22 +14,71 @@ exports.create = async (req, res) => {
   if (!req.body.name || !req.body.description) {
     return res.status(403).send({ message: "Invalid Location submited" });
   }
+  let vacation = req.body;
+  let vacationdb = {};
+  if (vacation.id) {
+    try {
+      vacationdb = await Vacation.findOne({
+        where: { id: req.body.id },
+      });
 
-  const vacationdb = await Vacation.findOne({
-    where: { name: req.body.name },
-  });
-
-  const vacation = req.body;
-
-  Vacation.create(vacation)
-    .then((data) => {
-      return res.send(data);
-    })
-    .catch((err) => {
+      vacationdb.name = vacation.name;
+      vacationdb.description = vacation.description;
+      vacationdb.discount = vacation.discount;
+      vacationdb.price = vacation.price;
+      vacationdb.fromDate = vacation.fromDate;
+      vacationdb.toDate = vacation.toDate;
+      vacationdb.save();
+      res.status(201).json({ status: "success", data: vacation });
+    } catch (err) {
+      console.log(err);
       return res
-        .status(500)
-        .send({ message: err.message || "Location cannot be created" });
-    });
+        .status(400)
+        .json({ status: "failed", message: "Failed to update Vacation" });
+    }
+  } else {
+    try {
+      var idArray = [];
+      vacation.locationActivityId.forEach((locId) => {
+        idArray.push(locId.id);
+      });
+      console.log(idArray);
+
+      return Vacation.create(vacation).then(function (newVacation) {
+        return LocationActivity.findAll({
+          where: { id: idArray },
+        }).then(function (locationActivity) {
+          return newVacation["addLocation_ activities"](locationActivity).then(
+            function (ans) {
+              res.status(201).json({ status: "success", data: newVacation });
+            }
+          );
+        });
+      });
+
+      vacation.locationActivityId.forEach((laId) => {
+        return Vacation.findByPk(vacationdb.id).then((dbVacat) => {
+          if (!dbVacat) {
+            throw new Error("Error saving vacation");
+          }
+
+          return LocationActivity.findByPk(laId.id).then((locationActivity) => {
+            if (!locationActivity) {
+              throw new Error("LocationActivity does not exists");
+            }
+            locationActivity.addLocationActivity(dbVacat);
+            console.log("Added Location Activity");
+            res.status(201).json({ status: "success", data: vacation });
+          });
+        });
+      });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Vacation already exists" });
+    }
+  }
 };
 
 exports.findAll = async (req, res) => {
@@ -54,6 +94,18 @@ exports.findAll = async (req, res) => {
     });
   }
   res.send(JSON.stringify(vacations));
+};
+
+exports.addLocationActivity = async (req, res) => {
+  return db.locationactivity
+    .findByPk(req.body.locationactivityId)
+    .then((locationactivity) => {
+      if (!locationactivity) return "errrr";
+      return Vacation.findByPk().then((vacatin) => {
+        locationactivity.addVacation(vacatin);
+        return locationactivity;
+      });
+    });
 };
 
 exports.findOne = async (req, res) => {

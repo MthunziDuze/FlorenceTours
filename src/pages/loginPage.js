@@ -2,7 +2,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 import Button from "../Components/buttonComponent";
-import { Card, CardBody, CardTitle, Col, Form, Row } from "react-bootstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Col,
+  Form,
+  Row,
+} from "react-bootstrap";
 import CarouselImage from "../Components/imageComponent";
 import authService from "../services/auth.service";
 import { jwtDecode } from "jwt-decode";
@@ -98,9 +106,11 @@ const LoginPage = () => {
             style={{ padding: "18px 16px", height: "90%" }}
           >
             <div className="container">
-              <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
-                Florence Tours
-              </CardTitle>
+              <CardHeader style={{ backgroundColor: "rgb(75, 93, 115)" }}>
+                <CardTitle style={{ backgroundColor: "rgb(75, 93, 115)" }}>
+                  Florence Tours
+                </CardTitle>
+              </CardHeader>
               <CardBody>
                 <p className="title">Travel and Touring</p>
                 <Form onSubmit={handleSubmit}>
@@ -147,7 +157,7 @@ const LoginPage = () => {
                       Remember me
                     </label>
                   </div>
-                  <div class="d-grid gap-2">
+                  <div className="d-grid gap-2">
                     <Button onClick={handleSubmit} state={offer}>
                       {"Login"}
                     </Button>
@@ -156,14 +166,14 @@ const LoginPage = () => {
                         return (
                           <div>
                             <h1>Welcome {user.name}</h1>
-                            <div class="card" style={{ width: "18rem" }}>
+                            <div className="card" style={{ width: "18rem" }}>
                               <img
-                                class="card-img-top"
+                                className="card-img-top"
                                 src={user.picture}
                                 alt="Card cap"
                               />
-                              <div class="card-body">
-                                <p class="card-text">{user.email}</p>
+                              <div className="card-body">
+                                <p className="card-text">{user.email}</p>
                               </div>
                             </div>
                           </div>
